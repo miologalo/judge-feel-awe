@@ -24,5 +24,12 @@ const TEXT =
 
 const outDir = process.env.OUTPUT_DIR ?? "/output";
 mkdirSync(outDir, { recursive: true });
+
+// Gate guard: the sealed scorer refuses entry.txt outside 1–280 code
+// points, so fail loudly here rather than shipping an invalid entry.
+const length = [...TEXT].length;
+if (length < 1 || length > 280 || TEXT.trim().length === 0) {
+  throw new Error(`entry text is ${length} chars, outside the 1-280 gate`);
+}
 writeFileSync(join(outDir, "entry.txt"), TEXT, "utf8");
-console.log(`wrote entry.txt (${[...TEXT].length} chars)`);
+console.log(`wrote entry.txt (${length} chars)`);
